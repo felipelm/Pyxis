@@ -5,7 +5,6 @@
 You're logged in already!
 
 {% else %}
-
 <form action="/login" method="POST">
     <div class="login">
         <div class="login-screen">
@@ -20,7 +19,7 @@ You're logged in already!
                     <input type="password" class="login-field" value="" placeholder="password" name="password">
                     <label class="login-field-icon fui-lock" for="login-pass"></label></div>
                 <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block">
-
+                <input style="display: none" name="rd" id="rd" type="text" value="{{ rd }}">
             </div>
         </div>
     </div>
