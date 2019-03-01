@@ -8,13 +8,24 @@ import ldap
 
 app = Flask(__name__)
 
+def ldap_auth(username, password):
+  ldap_server="ldap://ldap5.linea.gov.br"
+  user_dn = "uid="+username+",ou=people,dc=des-brazil,dc=org"
+  connect = ldap.initialize(ldap_server)
+
+  try:
+    connect.simple_bind_s(user_dn,password)
+    connect.unbind_s()
+    return True
+  except ldap.LDAPError:
+    connect.unbind_s()
+    return False
 
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    return username == '123' and password == '123'
-
+    return ldap_auth(username, password)
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
@@ -28,20 +39,7 @@ def check():
     auth = request.authorization
     if not auth or not check_auth(auth.username, auth.password):
         return authenticate()
-    return Response('Login OK', 200, {})
-
-@app.route("/ldap")
-def ldap_auth():
-  try:
-    #if authentication successful, get the full user data
-    connect.bind_s(user_dn,password)
-    result = connect.search_s(base_dn,ldap.SCOPE_SUBTREE,search_filter)
-    # return all user data results
-    connect.unbind_s()
-    return result
-  except ldap.LDAPError:
-    connect.unbind_s()
-    return "authentication error"
+    return Response('Login OK', 200, {})   
 
 if __name__ == '__main__':
     app.secret_key = '29cSy004wj2931m'
